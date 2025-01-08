@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Decorating Partner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        nav a {
+            margin: 0 15px;
+            color: white;
+            text-decoration: none;
+        }
+
+        section {
+            padding: 20px;
+        }
+
+        h2, h3, h4 {
+            margin-top: 20px;
+        }
+
+        form input, form select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+        }
+
+        button {
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
+        .decorations {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+
+        .decoration img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+        }
+    </style>
+</head>
+<body>
+    <!-- Home Page (index.html) -->
+    <header>
+        <h1>Event Decorating Partner</h1>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#registration">Registration</a>
+        </nav>
+    </header>
+
+    <section id="home">
+        <h2>Highlights</h2>
+        <p>Transform your event with our beautiful decorations! Choose from a variety of themes for weddings, parties, corporate events, and more.</p>
+
+        <h2>Types of Decorations</h2>
+        <div class="decorations">
+            <div class="decoration">
+                <img src="C:\Users\Priyadharshni  S\Downloads\www.jpg"" alt="Wedding Decorations">
+                <p>Wedding Decorations</p>
+            </div>
+            <div class="decoration">
+                <img src="C:\Users\Priyadharshni  S\Downloads\birth.jpg"" alt="Birthday Decorations">
+                <p>Birthday Decorations</p>
+            </div>
+            <div class="decoration">
+                <img src="C:\Users\Priyadharshni  S\Downloads\meet.jpg"" alt="Corporate Decorations">
+                <p>Corporate Decorations</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Registration Page (registration.html) -->
+    <section id="registration">
+        <h2>Event Registration</h2>
+        <form id="registrationForm">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Email</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="eventAddress">Event Address</label>
+            <input type="text" id="eventAddress" name="eventAddress" required>
+
+            <label for="eventDate">Event Date</label>
+            <input type="date" id="eventDate" name="eventDate" required>
+
+            <label for="eventTime">Event Time</label>
+            <input type="time" id="eventTime" name="eventTime" required>
+
+            <label for="decorationType">Type of Decoration</label>
+            <select id="decorationType" name="decorationType" required>
+                <option value="wedding">Wedding</option>
+                <option value="birthday">Birthday</option>
+                <option value="corporate">Corporate</option>
+            </select>
+
+            <button type="submit">Submit</button>
+        </form>
+    </section>
+
+    <script>
+        document.getElementById('registrationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            localStorage.setItem('eventDetails', JSON.stringify({
+                name: e.target.name.value,
+                email: e.target.email.value,
+                eventAddress: e.target.eventAddress.value,
+                eventDate: e.target.eventDate.value,
+                eventTime: e.target.eventTime.value,
+                decorationType: e.target.decorationType.value
+            }));
+            window.location.href = '#payment';
+        });
+    </script>
+
+    <!-- Payment Page (payment.html) -->
+    <section id="payment">
+        <h2>Payment Details</h2>
+        <div id="eventInfo"></div>
+
+        <h3>Select Decoration Package</h3>
+        <form id="paymentForm">
+            <label for="paymentType">Payment Type</label>
+            <select id="paymentType" name="paymentType" required>
+                <option value="debit">Debit Card</option>
+                <option value="credit">Credit Card</option>
+            </select>
+
+            <h4>Package Prices</h4>
+            <div>
+                <label><input type="radio" name="package" value="wedding" required> Wedding Package - $500</label>
+            </div>
+            <div>
+                <label><input type="radio" name="package" value="birthday" required> Birthday Package - $300</label>
+            </div>
+            <div>
+                <label><input type="radio" name="package" value="corporate" required> Corporate Package - $700</label>
+            </div>
+
+            <button type="submit">Confirm Payment</button>
+        </form>
+    </section>
+
+    <script>
+        const eventDetails = JSON.parse(localStorage.getItem('eventDetails'));
+        if (eventDetails) {
+            document.getElementById('eventInfo').innerHTML = `
+                <p><strong>Name:</strong> ${eventDetails.name}</p>
+                <p><strong>Email:</strong> ${eventDetails.email}</p>
+                <p><strong>Event Address:</strong> ${eventDetails.eventAddress}</p>
+                <p><strong>Event Date:</strong> ${eventDetails.eventDate}</p>
+                <p><strong>Event Time:</strong> ${eventDetails.eventTime}</p>
+                <p><strong>Decoration Type:</strong> ${eventDetails.decorationType}</p>
+            `;
+        }
+
+        document.getElementById('paymentForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const selectedPackage = document.querySelector('input[name="package"]:checked');
+            const paymentType = e.target.paymentType.value;
+
+            if (selectedPackage) {
+                alert(`Payment Confirmed for ${selectedPackage.value} Decoration Package using ${paymentType} card.`);
+                localStorage.removeItem('eventDetails');
+                window.location.href = '#home';
+            } else {
+                alert('Please select a decoration package.');
+            }
+        });
+    </script>
+</body>
+</html>
